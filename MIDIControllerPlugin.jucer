@@ -4,6 +4,8 @@
               pluginFormats="buildVST3" displaySplashScreen="1" jucerFormatVersion="1">
   <MAINGROUP id="FmwYDI" name="Midi Controller">
     <GROUP id="{26051BC9-277A-D842-26FF-0FA23D618644}" name="Source">
+      <FILE id="Hplxja" name="CustomLookFeel.h" compile="0" resource="0"
+            file="Source/CustomLookFeel.h"/>
       <FILE id="MN4OOm" name="MidiProcessor.h" compile="0" resource="0" file="Source/MidiProcessor.h"/>
       <FILE id="L3KqN8" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>

@@ -12,6 +12,7 @@ MidiiiiiAudioProcessorEditor::MidiiiiiAudioProcessorEditor (MidiiiiiAudioProcess
 
 	//Delay time slider
 	delayTimeSlider.addListener(this);
+	delayTimeSlider.setLookAndFeel(&custLookFeel);
 	delayTimeSlider.setSliderStyle(Slider::RotaryHorizontalVerticalDrag);
 	delayTimeSlider.setColour(Slider::thumbColourId, Colours::darkslategrey);
 	delayTimeSlider.setColour(Slider::textBoxTextColourId, Colours::darkslategrey);
@@ -25,6 +26,7 @@ MidiiiiiAudioProcessorEditor::MidiiiiiAudioProcessorEditor (MidiiiiiAudioProcess
 
 	//vari pitch slider
 	variPitchSlider.addListener(this);
+	variPitchSlider.setLookAndFeel(&custLookFeel);
 	variPitchSlider.setSliderStyle(Slider::RotaryHorizontalVerticalDrag);
 	variPitchSlider.setColour(Slider::thumbColourId, Colours::darkslategrey);
 	variPitchSlider.setColour(Slider::textBoxTextColourId, Colours::darkslategrey);
@@ -38,6 +40,7 @@ MidiiiiiAudioProcessorEditor::MidiiiiiAudioProcessorEditor (MidiiiiiAudioProcess
 
 	//Tuning slider
 	tuningSlider.addListener(this);
+	tuningSlider.setLookAndFeel(&custLookFeel);
 	tuningSlider.setSliderStyle(Slider::RotaryHorizontalVerticalDrag);
 	tuningSlider.setColour(Slider::thumbColourId, Colours::darkslategrey);
 	tuningSlider.setColour(Slider::textBoxTextColourId, Colours::darkslategrey);
@@ -51,6 +54,9 @@ MidiiiiiAudioProcessorEditor::MidiiiiiAudioProcessorEditor (MidiiiiiAudioProcess
 
 	//Note selector combo box
 	addAndMakeVisible(noteSelector);
+	noteSelector.setColour(ComboBox::backgroundColourId, Colours::slategrey);
+	noteSelector.setColour(ComboBox::buttonColourId, Colours::slategrey);
+
 	noteSelector.addItem("C4", 1);
 	noteSelector.addItem("C#", 2);
 	noteSelector.addItem("D", 3);
@@ -85,7 +91,7 @@ MidiiiiiAudioProcessorEditor::~MidiiiiiAudioProcessorEditor()
 //==============================================================================
 void MidiiiiiAudioProcessorEditor::paint (Graphics& g)
 {
-	g.fillAll(Colours::white);
+	g.fillAll(Colours::lightgrey);
 
 }
 

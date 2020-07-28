@@ -4,6 +4,7 @@
 
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
+#include "CustomLookFeel.h"
 
 //==============================================================================
 
@@ -36,6 +37,9 @@ private:
 
 	//Combo box
 	ComboBox noteSelector;
+
+	//custom look and feel for sliders
+	CustLookFeel custLookFeel;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MidiiiiiAudioProcessorEditor)
 };
