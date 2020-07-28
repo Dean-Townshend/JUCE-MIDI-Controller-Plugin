@@ -14,9 +14,14 @@ public:
     MidiiiiiAudioProcessor();
     ~MidiiiiiAudioProcessor();
 
-	int noteOnVel = 0;
-	int8 ccTempVal = 0;
-	int8 myVal = 0;
+	int8 ccTempVal0 = 0;
+	int8 ccVal0 = 0;
+	int8 ccTempVal1 = 0;
+	int8 ccVal1 = 0;
+	int8 ccTempVal2 = 0;
+	int8 ccVal2 = 0;
+	int8 ccTempVal3 = 0;
+	int8 ccVal3 = 0;
 
     //==============================================================================
 	void setMidiProcNoteVel(int noteVel)

@@ -14,10 +14,11 @@ MidiiiiiAudioProcessorEditor::MidiiiiiAudioProcessorEditor (MidiiiiiAudioProcess
 	delayTimeSlider.addListener(this);
 	delayTimeSlider.setLookAndFeel(&custLookFeel);
 	delayTimeSlider.setSliderStyle(Slider::RotaryHorizontalVerticalDrag);
-	delayTimeSlider.setColour(Slider::thumbColourId, Colours::darkslategrey);
-	delayTimeSlider.setColour(Slider::textBoxTextColourId, Colours::darkslategrey);
-	delayTimeSlider.setRange(0, 127, 1);
-	delayTimeSlider.setTextValueSuffix(" S");
+	delayTimeSlider.setColour(Slider::textBoxTextColourId, Colours::black);
+	delayTimeSlider.setColour(Slider::textBoxBackgroundColourId, Colours::slategrey);
+	delayTimeSlider.setColour(Slider::textBoxOutlineColourId, Colours::darkslategrey);
+	delayTimeSlider.setRange(0, 255, 1);
+	//delayTimeSlider.setTextValueSuffix(" S");
 	delayTimeSlider.setValue(0);
 
 	//Delay time label
@@ -28,8 +29,9 @@ MidiiiiiAudioProcessorEditor::MidiiiiiAudioProcessorEditor (MidiiiiiAudioProcess
 	variPitchSlider.addListener(this);
 	variPitchSlider.setLookAndFeel(&custLookFeel);
 	variPitchSlider.setSliderStyle(Slider::RotaryHorizontalVerticalDrag);
-	variPitchSlider.setColour(Slider::thumbColourId, Colours::darkslategrey);
-	variPitchSlider.setColour(Slider::textBoxTextColourId, Colours::darkslategrey);
+	variPitchSlider.setColour(Slider::textBoxTextColourId, Colours::black);
+	variPitchSlider.setColour(Slider::textBoxBackgroundColourId, Colours::slategrey);
+	variPitchSlider.setColour(Slider::textBoxOutlineColourId, Colours::darkslategrey);
 	variPitchSlider.setRange(0, 127, 1);
 	//tuningSlider.setTextValueSuffix(" ");
 	variPitchSlider.setValue(0);
@@ -42,8 +44,9 @@ MidiiiiiAudioProcessorEditor::MidiiiiiAudioProcessorEditor (MidiiiiiAudioProcess
 	tuningSlider.addListener(this);
 	tuningSlider.setLookAndFeel(&custLookFeel);
 	tuningSlider.setSliderStyle(Slider::RotaryHorizontalVerticalDrag);
-	tuningSlider.setColour(Slider::thumbColourId, Colours::darkslategrey);
-	tuningSlider.setColour(Slider::textBoxTextColourId, Colours::darkslategrey);
+	tuningSlider.setColour(Slider::textBoxTextColourId, Colours::black);
+	tuningSlider.setColour(Slider::textBoxBackgroundColourId, Colours::slategrey);
+	tuningSlider.setColour(Slider::textBoxOutlineColourId, Colours::darkslategrey);
 	tuningSlider.setRange(0, 127, 1);
 	//tuningSlider.setTextValueSuffix(" ");
 	tuningSlider.setValue(0);
@@ -100,7 +103,7 @@ void MidiiiiiAudioProcessorEditor::resized()
 	Rectangle<int> area = getLocalBounds();
 	Rectangle<int> guiArea = area;
 
-	Rectangle<int> sliderArea = guiArea.removeFromTop(guiArea.getWidth()*0.8);
+	Rectangle<int> sliderArea = guiArea.removeFromTop(guiArea.getWidth()*0.6);
 	Rectangle<int> buttonArea = guiArea;
 
 	int sliderAreaWidthPerElem = sliderArea.getWidth() / 3;
@@ -142,6 +145,19 @@ void MidiiiiiAudioProcessorEditor::resized()
 
 void MidiiiiiAudioProcessorEditor::sliderValueChanged(Slider* slider)
 {
-	processor.noteOnVel = delayTimeSlider.getValue();
-	processor.myVal = delayTimeSlider.getValue();
+	if (slider == &delayTimeSlider)
+	{
+		if (delayTimeSlider.getValue() >= 0 && delayTimeSlider.getValue() <= 127)
+			processor.ccVal0 = delayTimeSlider.getValue();
+		else if (delayTimeSlider.getValue() >= 128 && delayTimeSlider.getValue() <= 255)
+			processor.ccVal1 = delayTimeSlider.getValue();
+	}
+	else if (slider == &variPitchSlider)
+	{
+		processor.ccVal2 = variPitchSlider.getValue();
+	}
+	else if (slider == &tuningSlider)
+	{
+		processor.ccVal3 = tuningSlider.getValue();
+	}
 }

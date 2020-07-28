@@ -124,25 +124,39 @@ void MidiiiiiAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffe
 		buffer.clear();
 		midiMessages.clear();
 		MidiBuffer generatedMidi;
-		MidiMessage m;
+		MidiMessage m0;
+		MidiMessage m1;
+		MidiMessage m2;
+		MidiMessage m3;
+		MidiMessage m4;
 
-		if (myVal != ccTempVal)
+		if (ccVal0 != ccTempVal0)
 		{
-			m = MidiMessage::controllerEvent(1, 1, myVal);
-			generatedMidi.addEvent(m, midiMessages.getLastEventTime());
+			m1 = MidiMessage::controllerEvent(1, 1, ccVal0);
+			generatedMidi.addEvent(m1, midiMessages.getLastEventTime());
 		}
-
-		/*
-		else if (myVal2 != ccTempVal2)
+		else if (ccVal1 != ccTempVal1)
 		{
-			m = MidiMessage::controllerEvent(2, 1, myVal2);
-			generatedMidi.addEvent(m, midiMessages.getLastEventTime());
-		}*/
-
+			m2 = MidiMessage::controllerEvent(1, 2, ccVal1-127);
+			generatedMidi.addEvent(m2, midiMessages.getLastEventTime());
+		}
+		else if (ccVal2 != ccTempVal2)
+		{
+			m3 = MidiMessage::controllerEvent(1, 3, ccVal2);
+			generatedMidi.addEvent(m3, midiMessages.getLastEventTime());
+		}
+		else if (ccVal3 != ccTempVal3)
+		{
+			m4 = MidiMessage::controllerEvent(1, 4, ccVal3);
+			generatedMidi.addEvent(m4, midiMessages.getLastEventTime());
+		}
 		else generatedMidi.clear();
 
-		ccTempVal = myVal;
-		//ccTempVal2 = myVal2;
+		ccTempVal0 = ccVal0;
+		ccTempVal1 = ccVal1;
+		ccTempVal2 = ccVal2;
+		ccTempVal3 = ccVal3;
+		
 		midiMessages.swapWith(generatedMidi);
 }
 

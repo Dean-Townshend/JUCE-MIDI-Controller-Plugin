@@ -36,11 +36,11 @@ public:
 
         //Outline
         g.setColour (juce::Colours::darkslategrey);
-        g.drawEllipse (rx, ry, rw, rw, 1.0f);
+        g.drawEllipse (rx, ry, rw, rw, 1.5f);
 
         juce::Path p;
         auto pointerLength = radius * 0.33f;
-        auto pointerThickness = 2.0f;
+        auto pointerThickness = 2.5f;
         p.addRectangle (-pointerThickness * 0.5f, -radius, pointerThickness, pointerLength);
         p.applyTransform (juce::AffineTransform::rotation (angle).translated (centreX, centreY));
 
