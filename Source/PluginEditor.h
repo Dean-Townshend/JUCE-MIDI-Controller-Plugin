@@ -34,5 +34,8 @@ private:
 	Label tuningSliderLabel;
 	Label variPitchSliderLabel;
 
+	//Combo box
+	ComboBox noteSelector;
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MidiiiiiAudioProcessorEditor)
 };
