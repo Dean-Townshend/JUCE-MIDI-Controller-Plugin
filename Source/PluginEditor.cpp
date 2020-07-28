@@ -14,6 +14,7 @@ MidiiiiiAudioProcessorEditor::MidiiiiiAudioProcessorEditor (MidiiiiiAudioProcess
 	delayTimeSlider.addListener(this);
 	delayTimeSlider.setSliderStyle(Slider::RotaryHorizontalVerticalDrag);
 	delayTimeSlider.setColour(Slider::thumbColourId, Colours::darkslategrey);
+	delayTimeSlider.setColour(Slider::textBoxTextColourId, Colours::darkslategrey);
 	delayTimeSlider.setRange(0, 127, 1);
 	delayTimeSlider.setTextValueSuffix(" S");
 	delayTimeSlider.setValue(0);
@@ -26,6 +27,7 @@ MidiiiiiAudioProcessorEditor::MidiiiiiAudioProcessorEditor (MidiiiiiAudioProcess
 	variPitchSlider.addListener(this);
 	variPitchSlider.setSliderStyle(Slider::RotaryHorizontalVerticalDrag);
 	variPitchSlider.setColour(Slider::thumbColourId, Colours::darkslategrey);
+	variPitchSlider.setColour(Slider::textBoxTextColourId, Colours::darkslategrey);
 	variPitchSlider.setRange(0, 127, 1);
 	//tuningSlider.setTextValueSuffix(" ");
 	variPitchSlider.setValue(0);
@@ -38,6 +40,7 @@ MidiiiiiAudioProcessorEditor::MidiiiiiAudioProcessorEditor (MidiiiiiAudioProcess
 	tuningSlider.addListener(this);
 	tuningSlider.setSliderStyle(Slider::RotaryHorizontalVerticalDrag);
 	tuningSlider.setColour(Slider::thumbColourId, Colours::darkslategrey);
+	tuningSlider.setColour(Slider::textBoxTextColourId, Colours::darkslategrey);
 	tuningSlider.setRange(0, 127, 1);
 	//tuningSlider.setTextValueSuffix(" ");
 	tuningSlider.setValue(0);
@@ -82,6 +85,7 @@ MidiiiiiAudioProcessorEditor::~MidiiiiiAudioProcessorEditor()
 //==============================================================================
 void MidiiiiiAudioProcessorEditor::paint (Graphics& g)
 {
+	g.fillAll(Colours::white);
 
 }
 
