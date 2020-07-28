@@ -8,22 +8,27 @@
 
 //==============================================================================
 
-class MidiiiiiAudioProcessorEditor  : public AudioProcessorEditor, private Slider::Listener
+class MIDICAudioProcessorEditor  : public AudioProcessorEditor, private Slider::Listener
 {
 public:
-    MidiiiiiAudioProcessorEditor (MidiiiiiAudioProcessor&);
-    ~MidiiiiiAudioProcessorEditor();
+    MIDICAudioProcessorEditor (MIDIControllerAudioProcessor&);
+    ~MIDICAudioProcessorEditor();
 
     //==============================================================================
     void paint (Graphics&) override;
     void resized() override;
 
+	void noteSelectorChanged();
+	void modeSelectorChanged();
+
 private:
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.
-    MidiiiiiAudioProcessor& processor;
+    MIDIControllerAudioProcessor& processor;
 
 	void sliderValueChanged(Slider* slider) override; // [3
+
+	TextButton noteTestButton;
 
 	//Sliders
 	Slider delayTimeSlider;
@@ -37,9 +42,10 @@ private:
 
 	//Combo box
 	ComboBox noteSelector;
+	ComboBox modeSelector;
 
 	//custom look and feel for sliders
 	CustLookFeel custLookFeel;
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MidiiiiiAudioProcessorEditor)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MIDICAudioProcessorEditor)
 };

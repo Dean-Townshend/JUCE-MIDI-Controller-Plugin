@@ -7,12 +7,12 @@
 //==============================================================================
 /**
 */
-class MidiiiiiAudioProcessor  : public AudioProcessor
+class MIDIControllerAudioProcessor  : public AudioProcessor
 {
 public:
     //==============================================================================
-    MidiiiiiAudioProcessor();
-    ~MidiiiiiAudioProcessor();
+    MIDIControllerAudioProcessor();
+    ~MIDIControllerAudioProcessor();
 
 	int8 ccTempVal0 = 0;
 	int8 ccVal0 = 0;
@@ -22,6 +22,9 @@ public:
 	int8 ccVal2 = 0;
 	int8 ccTempVal3 = 0;
 	int8 ccVal3 = 0;
+
+	//Tuner note selected
+	int noteSelected = 1;
 
     //==============================================================================
 	void setMidiProcNoteVel(int noteVel)
@@ -69,5 +72,5 @@ public:
 private:
 	MidiProcessor midiProcessor;
     //==============================================================================
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MidiiiiiAudioProcessor)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MIDIControllerAudioProcessor)
 };

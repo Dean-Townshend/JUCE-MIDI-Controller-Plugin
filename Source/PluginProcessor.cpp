@@ -2,7 +2,7 @@
 #include "PluginEditor.h"
 
 //==============================================================================
-MidiiiiiAudioProcessor::MidiiiiiAudioProcessor()
+MIDIControllerAudioProcessor::MIDIControllerAudioProcessor()
 #ifndef JucePlugin_PreferredChannelConfigurations
      : AudioProcessor (BusesProperties()
                      #if ! JucePlugin_IsMidiEffect
@@ -16,17 +16,17 @@ MidiiiiiAudioProcessor::MidiiiiiAudioProcessor()
 {
 }
 
-MidiiiiiAudioProcessor::~MidiiiiiAudioProcessor()
+MIDIControllerAudioProcessor::~MIDIControllerAudioProcessor()
 {
 }
 
 //==============================================================================
-const String MidiiiiiAudioProcessor::getName() const
+const String MIDIControllerAudioProcessor::getName() const
 {
     return JucePlugin_Name;
 }
 
-bool MidiiiiiAudioProcessor::acceptsMidi() const
+bool MIDIControllerAudioProcessor::acceptsMidi() const
 {
    #if JucePlugin_WantsMidiInput
     return true;
@@ -35,7 +35,7 @@ bool MidiiiiiAudioProcessor::acceptsMidi() const
    #endif
 }
 
-bool MidiiiiiAudioProcessor::producesMidi() const
+bool MIDIControllerAudioProcessor::producesMidi() const
 {
    #if JucePlugin_ProducesMidiOutput
     return true;
@@ -44,7 +44,7 @@ bool MidiiiiiAudioProcessor::producesMidi() const
    #endif
 }
 
-bool MidiiiiiAudioProcessor::isMidiEffect() const
+bool MIDIControllerAudioProcessor::isMidiEffect() const
 {
    #if JucePlugin_IsMidiEffect
     return true;
@@ -53,50 +53,50 @@ bool MidiiiiiAudioProcessor::isMidiEffect() const
    #endif
 }
 
-double MidiiiiiAudioProcessor::getTailLengthSeconds() const
+double MIDIControllerAudioProcessor::getTailLengthSeconds() const
 {
     return 0.0;
 }
 
-int MidiiiiiAudioProcessor::getNumPrograms()
+int MIDIControllerAudioProcessor::getNumPrograms()
 {
     return 1;   // NB: some hosts don't cope very well if you tell them there are 0 programs,
                 // so this should be at least 1, even if you're not really implementing programs.
 }
 
-int MidiiiiiAudioProcessor::getCurrentProgram()
+int MIDIControllerAudioProcessor::getCurrentProgram()
 {
     return 0;
 }
 
-void MidiiiiiAudioProcessor::setCurrentProgram (int index)
+void MIDIControllerAudioProcessor::setCurrentProgram (int index)
 {
 }
 
-const String MidiiiiiAudioProcessor::getProgramName (int index)
+const String MIDIControllerAudioProcessor::getProgramName (int index)
 {
     return {};
 }
 
-void MidiiiiiAudioProcessor::changeProgramName (int index, const String& newName)
+void MIDIControllerAudioProcessor::changeProgramName (int index, const String& newName)
 {
 }
 
 //==============================================================================
-void MidiiiiiAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
+void MIDIControllerAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
     // Use this method as the place to do any pre-playback
     // initialisation that you need..
 }
 
-void MidiiiiiAudioProcessor::releaseResources()
+void MIDIControllerAudioProcessor::releaseResources()
 {
     // When playback stops, you can use this as an opportunity to free up any
     // spare memory, etc.
 }
 
 #ifndef JucePlugin_PreferredChannelConfigurations
-bool MidiiiiiAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const
+bool MIDIControllerAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const
 {
   #if JucePlugin_IsMidiEffect
     ignoreUnused (layouts);
@@ -119,7 +119,7 @@ bool MidiiiiiAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts)
 }
 #endif
 
-void MidiiiiiAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer& midiMessages)
+void MIDIControllerAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer& midiMessages)
 {
 		buffer.clear();
 		midiMessages.clear();
@@ -140,14 +140,16 @@ void MidiiiiiAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffe
 			m2 = MidiMessage::controllerEvent(1, 2, ccVal1-127);
 			generatedMidi.addEvent(m2, midiMessages.getLastEventTime());
 		}
+		//
 		else if (ccVal2 != ccTempVal2)
 		{
 			m3 = MidiMessage::controllerEvent(1, 3, ccVal2);
 			generatedMidi.addEvent(m3, midiMessages.getLastEventTime());
 		}
+		//TuningSlider
 		else if (ccVal3 != ccTempVal3)
 		{
-			m4 = MidiMessage::controllerEvent(1, 4, ccVal3);
+			m4 = MidiMessage::controllerEvent(1, noteSelected, ccVal3);
 			generatedMidi.addEvent(m4, midiMessages.getLastEventTime());
 		}
 		else generatedMidi.clear();
@@ -161,25 +163,25 @@ void MidiiiiiAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffe
 }
 
 //==============================================================================
-bool MidiiiiiAudioProcessor::hasEditor() const
+bool MIDIControllerAudioProcessor::hasEditor() const
 {
     return true; // (change this to false if you choose to not supply an editor)
 }
 
-AudioProcessorEditor* MidiiiiiAudioProcessor::createEditor()
+AudioProcessorEditor* MIDIControllerAudioProcessor::createEditor()
 {
-    return new MidiiiiiAudioProcessorEditor (*this);
+    return new MIDICAudioProcessorEditor (*this);
 }
 
 //==============================================================================
-void MidiiiiiAudioProcessor::getStateInformation (MemoryBlock& destData)
+void MIDIControllerAudioProcessor::getStateInformation (MemoryBlock& destData)
 {
     // You should use this method to store your parameters in the memory block.
     // You could do that either as raw data, or use the XML or ValueTree classes
     // as intermediaries to make it easy to save and load complex data.
 }
 
-void MidiiiiiAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
+void MIDIControllerAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
 {
     // You should use this method to restore your parameters from this memory block,
     // whose contents will have been created by the getStateInformation() call.
@@ -189,5 +191,5 @@ void MidiiiiiAudioProcessor::setStateInformation (const void* data, int sizeInBy
 // This creates new instances of the plugin..
 AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
-    return new MidiiiiiAudioProcessor();
+    return new MIDIControllerAudioProcessor();
 }

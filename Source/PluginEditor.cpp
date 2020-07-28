@@ -4,7 +4,7 @@
 #include "PluginEditor.h"
 
 //==============================================================================
-MidiiiiiAudioProcessorEditor::MidiiiiiAudioProcessorEditor (MidiiiiiAudioProcessor& p) :AudioProcessorEditor (&p), processor (p)
+MIDICAudioProcessorEditor::MIDICAudioProcessorEditor (MIDIControllerAudioProcessor& p) :AudioProcessorEditor (&p), processor (p)
 {
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
@@ -74,8 +74,20 @@ MidiiiiiAudioProcessorEditor::MidiiiiiAudioProcessorEditor (MidiiiiiAudioProcess
 	noteSelector.addItem("B", 12);
 	noteSelector.addItem("C5", 13);
 
-	//noteSelector.onChange = [this] { noteSelectorChanged(); };
+	noteSelector.onChange = [this] { noteSelectorChanged(); };
 	noteSelector.setSelectedId(1);
+
+	//Note selector combo box
+	addAndMakeVisible(modeSelector);
+	modeSelector.setColour(ComboBox::backgroundColourId, Colours::slategrey);
+	modeSelector.setColour(ComboBox::buttonColourId, Colours::slategrey);
+
+	modeSelector.addItem("Delay", 1);
+	modeSelector.addItem("Tuning", 2);
+	modeSelector.addItem("Synth", 3);
+
+	modeSelector.onChange = [this] { modeSelectorChanged(); };
+	modeSelector.setSelectedId(1);
 
 	// this function adds the slider to the editor
 	addAndMakeVisible(&delayTimeSlider);
@@ -87,24 +99,26 @@ MidiiiiiAudioProcessorEditor::MidiiiiiAudioProcessorEditor (MidiiiiiAudioProcess
 	
 }
 
-MidiiiiiAudioProcessorEditor::~MidiiiiiAudioProcessorEditor()
+MIDICAudioProcessorEditor::~MIDICAudioProcessorEditor()
 {
 }
 
 //==============================================================================
-void MidiiiiiAudioProcessorEditor::paint (Graphics& g)
+void MIDICAudioProcessorEditor::paint (Graphics& g)
 {
 	g.fillAll(Colours::lightgrey);
 
 }
 
-void MidiiiiiAudioProcessorEditor::resized()
+void MIDICAudioProcessorEditor::resized()
 {
 	Rectangle<int> area = getLocalBounds();
 	Rectangle<int> guiArea = area;
 
-	Rectangle<int> sliderArea = guiArea.removeFromTop(guiArea.getWidth()*0.6);
-	Rectangle<int> buttonArea = guiArea;
+	Rectangle<int> modeSelectorArea = guiArea.removeFromTop(guiArea.getWidth() * 0.1);
+	modeSelector.setBounds(modeSelectorArea);
+
+	Rectangle<int> sliderArea = guiArea;
 
 	int sliderAreaWidthPerElem = sliderArea.getWidth() / 3;
 
@@ -143,7 +157,7 @@ void MidiiiiiAudioProcessorEditor::resized()
 	tuningSliderLabel.setJustificationType(Justification::centred);
 }
 
-void MidiiiiiAudioProcessorEditor::sliderValueChanged(Slider* slider)
+void MIDICAudioProcessorEditor::sliderValueChanged(Slider* slider)
 {
 	if (slider == &delayTimeSlider)
 	{
@@ -159,5 +173,38 @@ void MidiiiiiAudioProcessorEditor::sliderValueChanged(Slider* slider)
 	else if (slider == &tuningSlider)
 	{
 		processor.ccVal3 = tuningSlider.getValue();
+	}
+}
+
+void MIDICAudioProcessorEditor::noteSelectorChanged()
+{
+	switch (noteSelector.getSelectedId())
+	{
+		case 1: processor.noteSelected = 1; break;
+		case 2: processor.noteSelected = 2; break;
+		case 3: processor.noteSelected = 3; break;
+		case 4: processor.noteSelected = 4; break;
+		case 5: processor.noteSelected = 5; break;
+		case 6: processor.noteSelected = 6; break;
+		case 7: processor.noteSelected = 7; break;
+		case 8: processor.noteSelected = 8; break;
+		case 9: processor.noteSelected = 9; break;
+		case 10: processor.noteSelected = 10; break;
+		case 11: processor.noteSelected = 11; break;
+		case 12: processor.noteSelected = 12; break;
+		case 13: processor.noteSelected = 13; break;
+		case 14: processor.noteSelected = 14; break;
+		case 15: processor.noteSelected = 15; break;
+
+		default: break;
+	}
+}
+
+void MIDICAudioProcessorEditor::modeSelectorChanged()
+{
+	switch (modeSelector.getSelectedId())
+	{
+
+	default: break;
 	}
 }
