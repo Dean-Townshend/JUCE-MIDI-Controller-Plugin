@@ -4,7 +4,7 @@
 #include "PluginEditor.h"
 
 //==============================================================================
-MIDICAudioProcessorEditor::MIDICAudioProcessorEditor (MIDIControllerAudioProcessor& p) :AudioProcessorEditor (&p), processor (p)
+MIDICAudioProcessorEditor::MIDICAudioProcessorEditor (MIDIControllerAudioProcessor& p) :AudioProcessorEditor (&p), processor (p), keyboard(keyboardState, juce::MidiKeyboardComponent::horizontalKeyboard)
 {
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
@@ -17,7 +17,7 @@ MIDICAudioProcessorEditor::MIDICAudioProcessorEditor (MIDIControllerAudioProcess
 	delayTimeSlider.setColour(Slider::textBoxTextColourId, Colours::black);
 	delayTimeSlider.setColour(Slider::textBoxBackgroundColourId, Colours::slategrey);
 	delayTimeSlider.setColour(Slider::textBoxOutlineColourId, Colours::darkslategrey);
-	delayTimeSlider.setRange(0, 255, 1);
+	delayTimeSlider.setRange(0, 254, 1);
 	delayTimeSlider.setValue(0);
 
 	//Delay time label
@@ -86,7 +86,7 @@ MIDICAudioProcessorEditor::MIDICAudioProcessorEditor (MIDIControllerAudioProcess
 	modeSelector.addItem("Synth", 3);
 
 	modeSelector.onChange = [this] { modeSelectorChanged(); };
-	modeSelector.setSelectedId(currentMode);
+	modeSelector.setSelectedId(processor.currentMode);
 
 	noteTestButton.addListener(this);
 	noteTestButton.setColour(TextButton:: buttonColourId, Colours:: slategrey);
@@ -121,8 +121,9 @@ void MIDICAudioProcessorEditor::resized()
 
 	Rectangle<int> sliderArea = guiArea;
 
-	if (currentMode == 1) 
+	if (processor.currentMode == 1) 
 	{
+		removeChildComponent(&keyboard);
 		removeChildComponent(&tuningSlider);
 		removeChildComponent(&tuningSliderLabel);
 		removeChildComponent(&noteSelector);
@@ -157,12 +158,14 @@ void MIDICAudioProcessorEditor::resized()
 		delayTimeSliderLabel.setJustificationType(Justification::centred);
 		variPitchSliderLabel.setJustificationType(Justification::centred);
 	}
-	else if (currentMode == 2)
+	else if (processor.currentMode == 2)
 	{
 		removeChildComponent(&delayTimeSlider);
 		removeChildComponent(&delayTimeSliderLabel);
 		removeChildComponent(&variPitchSlider);
 		removeChildComponent(&variPitchSliderLabel);
+		removeChildComponent(&keyboard);
+
 		addAndMakeVisible(tuningSlider);
 		addAndMakeVisible(tuningSliderLabel);
 		addAndMakeVisible(noteSelector);
@@ -194,7 +197,7 @@ void MIDICAudioProcessorEditor::resized()
 		//noteSelector.setBounds(tuningComboBox);
 		tuningSliderLabel.setJustificationType(Justification::centred);
 	}
-	else if (currentMode == 3)
+	else if (processor.currentMode == 3)
 	{
 		removeChildComponent(&tuningSlider);
 		removeChildComponent(&tuningSliderLabel);
@@ -203,6 +206,14 @@ void MIDICAudioProcessorEditor::resized()
 		removeChildComponent(&delayTimeSliderLabel);
 		removeChildComponent(&variPitchSlider);
 		removeChildComponent(&variPitchSliderLabel);
+		removeChildComponent(&noteTestButton);
+		removeChildComponent(&noteResetButton);
+
+		addAndMakeVisible(keyboard);
+
+		Rectangle<int> keyboardArea = sliderArea.removeFromTop(sliderArea.getHeight() /2);
+
+		keyboard.setBounds(keyboardArea);
 	}
 		
 }
@@ -253,17 +264,17 @@ void MIDICAudioProcessorEditor::modeSelectorChanged()
 {
 	if (modeSelector.getSelectedId()==1)
 	{
-		currentMode = 1;
+		processor.currentMode = 1;
 		resized();
 	}
 	else if (modeSelector.getSelectedId() == 2)
 	{
-		currentMode = 2;
+		processor.currentMode = 2;
 		resized();
 	}
 	else if (modeSelector.getSelectedId() == 3)
 	{
-		currentMode = 3;
+		processor.currentMode = 3;
 		resized();
 	}
 }

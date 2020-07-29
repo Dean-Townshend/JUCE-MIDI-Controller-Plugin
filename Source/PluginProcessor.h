@@ -13,6 +13,7 @@ public:
     //==============================================================================
     MIDIControllerAudioProcessor();
     ~MIDIControllerAudioProcessor();
+	int currentMode = 1;
 
 	int8 ccTempVal0 = 0;
 	int8 ccVal0 = 0;

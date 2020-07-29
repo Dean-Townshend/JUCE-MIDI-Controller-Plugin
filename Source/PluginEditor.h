@@ -14,7 +14,7 @@ public:
     MIDICAudioProcessorEditor (MIDIControllerAudioProcessor&);
     ~MIDICAudioProcessorEditor();
 
-	int currentMode = 1;
+	
     //==============================================================================
     void paint (Graphics&) override;
     void resized() override;
@@ -49,6 +49,9 @@ private:
 
 	//custom look and feel for sliders
 	CustLookFeel custLookFeel;
+
+	MidiKeyboardState keyboardState;
+	MidiKeyboardComponent keyboard;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MIDICAudioProcessorEditor)
 };

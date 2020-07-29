@@ -122,7 +122,6 @@ bool MIDIControllerAudioProcessor::isBusesLayoutSupported (const BusesLayout& la
 void MIDIControllerAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer& midiMessages)
 {
 		buffer.clear();
-		midiMessages.clear();
 		MidiBuffer generatedMidi;
 		MidiMessage m0;
 		MidiMessage m1;
@@ -132,48 +131,57 @@ void MIDIControllerAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mid
 		MidiMessage m5;
 		MidiMessage m6;
 
-		if (ccVal0 != ccTempVal0)
+		if (currentMode == 3)
 		{
-			m1 = MidiMessage::controllerEvent(1, 1, ccVal0);
-			generatedMidi.addEvent(m1, midiMessages.getLastEventTime());
-		}
-		else if (ccVal1 != ccTempVal1)
-		{
-			m2 = MidiMessage::controllerEvent(1, 2, ccVal1-127);
-			generatedMidi.addEvent(m2, midiMessages.getLastEventTime());
-		}
-		//
-		else if (ccVal2 != ccTempVal2)
-		{
-			m3 = MidiMessage::controllerEvent(1, 3, ccVal2);
-			generatedMidi.addEvent(m3, midiMessages.getLastEventTime());
-		}
-		//TuningSlider
-		else if (ccVal3 != ccTempVal3)
-		{
-			m4 = MidiMessage::controllerEvent(1, noteSelected, ccVal3);
-			generatedMidi.addEvent(m4, midiMessages.getLastEventTime());
-		}
-		else if (notePlay == true)
-		{
-			m5 = MidiMessage::noteOn(1, noteSelected, uint8(0));
-			generatedMidi.addEvent(m5, midiMessages.getLastEventTime());
-			notePlay = false;
-		}
-		else if (noteReset == true)
-		{
-			m5 = MidiMessage::noteOn(1, noteSelected, uint8(0));
-			generatedMidi.addEvent(m6, midiMessages.getLastEventTime());
-			noteReset = false;
-		}
-		else generatedMidi.clear();
 
-		ccTempVal0 = ccVal0;
-		ccTempVal1 = ccVal1;
-		ccTempVal2 = ccVal2;
-		ccTempVal3 = ccVal3;
-		
-		midiMessages.swapWith(generatedMidi);
+		}
+		else
+		{
+			midiMessages.clear();
+
+			if (ccVal0 != ccTempVal0)
+			{
+				m1 = MidiMessage::controllerEvent(1, 1, ccVal0);
+				generatedMidi.addEvent(m1, midiMessages.getLastEventTime());
+			}
+			else if (ccVal1 != ccTempVal1)
+			{
+				m2 = MidiMessage::controllerEvent(1, 2, ccVal1 - 127);
+				generatedMidi.addEvent(m2, midiMessages.getLastEventTime());
+			}
+			//
+			else if (ccVal2 != ccTempVal2)
+			{
+				m3 = MidiMessage::controllerEvent(1, 3, ccVal2);
+				generatedMidi.addEvent(m3, midiMessages.getLastEventTime());
+			}
+			//TuningSlider
+			else if (ccVal3 != ccTempVal3)
+			{
+				m4 = MidiMessage::controllerEvent(1, noteSelected, ccVal3);
+				generatedMidi.addEvent(m4, midiMessages.getLastEventTime());
+			}
+			else if (notePlay == true)
+			{
+				m5 = MidiMessage::noteOn(1, noteSelected, uint8(0));
+				generatedMidi.addEvent(m5, midiMessages.getLastEventTime());
+				notePlay = false;
+			}
+			else if (noteReset == true)
+			{
+				m5 = MidiMessage::noteOn(1, noteSelected, uint8(0));
+				generatedMidi.addEvent(m6, midiMessages.getLastEventTime());
+				noteReset = false;
+			}
+			else generatedMidi.clear();
+
+			ccTempVal0 = ccVal0;
+			ccTempVal1 = ccVal1;
+			ccTempVal2 = ccVal2;
+			ccTempVal3 = ccVal3;
+
+			midiMessages.swapWith(generatedMidi);
+		}
 }
 
 //==============================================================================
