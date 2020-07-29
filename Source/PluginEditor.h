@@ -14,6 +14,7 @@ public:
     MIDICAudioProcessorEditor (MIDIControllerAudioProcessor&);
     ~MIDICAudioProcessorEditor();
 
+	int currentMode = 1;
     //==============================================================================
     void paint (Graphics&) override;
     void resized() override;
@@ -29,6 +30,7 @@ private:
 	void sliderValueChanged(Slider* slider) override; // [3
 
 	TextButton noteTestButton;
+	TextButton noteResetButton;
 
 	//Sliders
 	Slider delayTimeSlider;

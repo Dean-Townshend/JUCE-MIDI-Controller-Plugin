@@ -18,7 +18,6 @@ MIDICAudioProcessorEditor::MIDICAudioProcessorEditor (MIDIControllerAudioProcess
 	delayTimeSlider.setColour(Slider::textBoxBackgroundColourId, Colours::slategrey);
 	delayTimeSlider.setColour(Slider::textBoxOutlineColourId, Colours::darkslategrey);
 	delayTimeSlider.setRange(0, 255, 1);
-	//delayTimeSlider.setTextValueSuffix(" S");
 	delayTimeSlider.setValue(0);
 
 	//Delay time label
@@ -56,7 +55,7 @@ MIDICAudioProcessorEditor::MIDICAudioProcessorEditor (MIDIControllerAudioProcess
 	tuningSliderLabel.setColour(Label::textColourId, Colours::darkslategrey);
 
 	//Note selector combo box
-	addAndMakeVisible(noteSelector);
+	//addAndMakeVisible(noteSelector);
 	noteSelector.setColour(ComboBox::backgroundColourId, Colours::slategrey);
 	noteSelector.setColour(ComboBox::buttonColourId, Colours::slategrey);
 
@@ -78,7 +77,7 @@ MIDICAudioProcessorEditor::MIDICAudioProcessorEditor (MIDIControllerAudioProcess
 	noteSelector.setSelectedId(1);
 
 	//Note selector combo box
-	addAndMakeVisible(modeSelector);
+	addAndMakeVisible(&modeSelector);
 	modeSelector.setColour(ComboBox::backgroundColourId, Colours::slategrey);
 	modeSelector.setColour(ComboBox::buttonColourId, Colours::slategrey);
 
@@ -87,16 +86,16 @@ MIDICAudioProcessorEditor::MIDICAudioProcessorEditor (MIDIControllerAudioProcess
 	modeSelector.addItem("Synth", 3);
 
 	modeSelector.onChange = [this] { modeSelectorChanged(); };
-	modeSelector.setSelectedId(1);
+	modeSelector.setSelectedId(currentMode);
 
-	// this function adds the slider to the editor
-	addAndMakeVisible(&delayTimeSlider);
-	addAndMakeVisible(&delayTimeSliderLabel);
-	addAndMakeVisible(&variPitchSlider);
-	addAndMakeVisible(&variPitchSliderLabel);
-	addAndMakeVisible(&tuningSlider);
-	addAndMakeVisible(&tuningSliderLabel);
-	
+	noteTestButton.setColour(TextButton:: buttonColourId, Colours:: slategrey);
+	noteTestButton.setColour(TextButton::textColourOffId, Colours::black);
+	noteTestButton.setButtonText("Play Note");
+
+	noteResetButton.setColour(TextButton::buttonColourId, Colours::slategrey);
+	noteResetButton.setColour(TextButton::textColourOffId, Colours::black);
+	noteResetButton.setButtonText("Defualt Pitch");
+
 }
 
 MIDICAudioProcessorEditor::~MIDICAudioProcessorEditor()
@@ -115,46 +114,95 @@ void MIDICAudioProcessorEditor::resized()
 	Rectangle<int> area = getLocalBounds();
 	Rectangle<int> guiArea = area;
 
-	Rectangle<int> modeSelectorArea = guiArea.removeFromTop(guiArea.getWidth() * 0.1);
+	Rectangle<int> modeSelectorArea = guiArea.removeFromTop(guiArea.getHeight() * 0.1);
 	modeSelector.setBounds(modeSelectorArea);
 
 	Rectangle<int> sliderArea = guiArea;
 
-	int sliderAreaWidthPerElem = sliderArea.getWidth() / 3;
+	if (currentMode == 1) 
+	{
+		removeChildComponent(&tuningSlider);
+		removeChildComponent(&tuningSliderLabel);
+		removeChildComponent(&noteSelector);
+		removeChildComponent(&noteTestButton);
+		removeChildComponent(&noteResetButton);
+		addAndMakeVisible(delayTimeSlider);
+		addAndMakeVisible(delayTimeSliderLabel);
+		addAndMakeVisible(variPitchSlider);
+		addAndMakeVisible(variPitchSliderLabel);
 
-	Rectangle<int> delayTimeArea = sliderArea.removeFromLeft(sliderAreaWidthPerElem);
-	Rectangle<int> delayTimeSliderArea = delayTimeArea.removeFromBottom(delayTimeArea.getHeight() * 0.9);
-	Rectangle<int> delayTimerSliderVal = delayTimeSliderArea.removeFromBottom(delayTimeSliderArea.getHeight()/10);
-	Rectangle<int> delayLabel = delayTimeArea;
+		int sliderAreaWidthPerElem = sliderArea.getWidth() / 2;
 
-	Rectangle<int> variPitchArea = sliderArea.removeFromLeft(sliderAreaWidthPerElem);
-	Rectangle<int> variPitchSliderArea = variPitchArea.removeFromBottom(variPitchArea.getHeight() * 0.9);
-	Rectangle<int> variPitchSliderVal = variPitchSliderArea.removeFromBottom(variPitchSliderArea.getHeight() / 10);
-	Rectangle<int> variPitchLabel = variPitchArea;
+		Rectangle<int> delayTimeArea = sliderArea.removeFromLeft(sliderAreaWidthPerElem);
+		Rectangle<int> delayTimeSliderArea = delayTimeArea.removeFromBottom(delayTimeArea.getHeight() * 0.9);
+		Rectangle<int> delayTimerSliderVal = delayTimeSliderArea.removeFromBottom(delayTimeSliderArea.getHeight() / 10);
+		Rectangle<int> delayLabel = delayTimeArea;
 
-	Rectangle<int> tuningArea = sliderArea.removeFromLeft(sliderAreaWidthPerElem);
-	Rectangle<int> tuningSliderArea = tuningArea.removeFromBottom(tuningArea.getHeight() * 0.9);
-	Rectangle<int> tuningSliderVal = tuningSliderArea.removeFromBottom(tuningSliderArea.getHeight() / 10);
-	Rectangle<int> tuningLabel = tuningArea.removeFromLeft(tuningArea.getWidth()/2);
-	Rectangle<int> tuningComboBox = tuningArea;
+		Rectangle<int> variPitchArea = sliderArea.removeFromLeft(sliderAreaWidthPerElem);
+		Rectangle<int> variPitchSliderArea = variPitchArea.removeFromBottom(variPitchArea.getHeight() * 0.9);
+		Rectangle<int> variPitchSliderVal = variPitchSliderArea.removeFromBottom(variPitchSliderArea.getHeight() / 10);
+		Rectangle<int> variPitchLabel = variPitchArea;
 
-	delayTimeSlider.setTextBoxStyle(Slider::TextBoxBelow, false, delayTimerSliderVal.getWidth(), delayTimerSliderVal.getHeight());
-	variPitchSlider.setTextBoxStyle(Slider::TextBoxBelow, false, variPitchSliderVal.getWidth(), variPitchSliderVal.getHeight());
-	tuningSlider.setTextBoxStyle(Slider::TextBoxBelow, false, tuningSliderVal.getWidth(), tuningSliderVal.getHeight());
+		delayTimeSlider.setTextBoxStyle(Slider::TextBoxBelow, false, delayTimerSliderVal.getWidth(), delayTimerSliderVal.getHeight());
+		variPitchSlider.setTextBoxStyle(Slider::TextBoxBelow, false, variPitchSliderVal.getWidth(), variPitchSliderVal.getHeight());
 
-	//Set bounds from areas
-	delayTimeSlider.setBounds(delayTimeSliderArea);
-	delayTimeSliderLabel.setBounds(delayTimeArea);
-	variPitchSlider.setBounds(variPitchSliderArea);
+		//Set bounds from areas
+		delayTimeSlider.setBounds(delayTimeSliderArea);
+		delayTimeSliderLabel.setBounds(delayTimeArea);
+		variPitchSlider.setBounds(variPitchSliderArea);
+		variPitchSliderLabel.setBounds(variPitchArea);
 
-	variPitchSliderLabel.setBounds(variPitchArea);
-	tuningSlider.setBounds(tuningSliderArea);
-	tuningSliderLabel.setBounds(tuningLabel);
-	noteSelector.setBounds(tuningComboBox);
+		delayTimeSliderLabel.setJustificationType(Justification::centred);
+		variPitchSliderLabel.setJustificationType(Justification::centred);
+	}
+	else if (currentMode == 2)
+	{
+		removeChildComponent(&delayTimeSlider);
+		removeChildComponent(&delayTimeSliderLabel);
+		removeChildComponent(&variPitchSlider);
+		removeChildComponent(&variPitchSliderLabel);
+		addAndMakeVisible(tuningSlider);
+		addAndMakeVisible(tuningSliderLabel);
+		addAndMakeVisible(noteSelector);
 
-	delayTimeSliderLabel.setJustificationType(Justification::centred);
-	variPitchSliderLabel.setJustificationType(Justification::centred);
-	tuningSliderLabel.setJustificationType(Justification::centred);
+		addAndMakeVisible(noteTestButton);
+		addAndMakeVisible(noteResetButton);
+
+		Rectangle<int> tuningArea = sliderArea;
+		
+		Rectangle<int> labels = tuningArea.removeFromTop(tuningArea.getHeight()*0.1);
+
+		Rectangle<int> tuningLabel = labels.removeFromLeft(tuningArea.getWidth() / 2);
+		tuningSliderLabel.setBounds(tuningLabel);
+
+		Rectangle<int> tuningComboBox = labels;
+		noteSelector.setBounds(tuningComboBox);
+
+		Rectangle<int> tuningSliderArea = tuningArea.removeFromTop(tuningArea.getHeight() * 0.9);
+		Rectangle<int> tuningSliderVal = tuningSliderArea.removeFromTop(tuningSliderArea.getHeight()* 0.1);
+
+		tuningSlider.setBounds(tuningSliderArea);
+
+		Rectangle<int> noteTestButtonArea = tuningArea.removeFromLeft(tuningArea.getWidth() / 2);
+		noteTestButton.setBounds(noteTestButtonArea);
+		noteResetButton.setBounds(tuningArea);
+
+		tuningSlider.setTextBoxStyle(Slider::TextBoxBelow, false, tuningSliderVal.getWidth(), tuningSliderVal.getHeight());
+		
+		//noteSelector.setBounds(tuningComboBox);
+		tuningSliderLabel.setJustificationType(Justification::centred);
+	}
+	else if (currentMode == 3)
+	{
+		removeChildComponent(&tuningSlider);
+		removeChildComponent(&tuningSliderLabel);
+		removeChildComponent(&noteSelector);
+		removeChildComponent(&delayTimeSlider);
+		removeChildComponent(&delayTimeSliderLabel);
+		removeChildComponent(&variPitchSlider);
+		removeChildComponent(&variPitchSliderLabel);
+	}
+		
 }
 
 void MIDICAudioProcessorEditor::sliderValueChanged(Slider* slider)
@@ -195,16 +243,25 @@ void MIDICAudioProcessorEditor::noteSelectorChanged()
 		case 13: processor.noteSelected = 13; break;
 		case 14: processor.noteSelected = 14; break;
 		case 15: processor.noteSelected = 15; break;
-
 		default: break;
 	}
 }
 
 void MIDICAudioProcessorEditor::modeSelectorChanged()
 {
-	switch (modeSelector.getSelectedId())
+	if (modeSelector.getSelectedId()==1)
 	{
-
-	default: break;
+		currentMode = 1;
+		resized();
+	}
+	else if (modeSelector.getSelectedId() == 2)
+	{
+		currentMode = 2;
+		resized();
+	}
+	else if (modeSelector.getSelectedId() == 3)
+	{
+		currentMode = 3;
+		resized();
 	}
 }
