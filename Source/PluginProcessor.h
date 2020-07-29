@@ -26,6 +26,9 @@ public:
 	//Tuner note selected
 	int noteSelected = 1;
 
+	//Button states
+	bool notePlay = false, noteReset = false;
+
     //==============================================================================
 	void setMidiProcNoteVel(int noteVel)
 	{

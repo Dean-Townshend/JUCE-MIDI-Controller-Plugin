@@ -88,10 +88,12 @@ MIDICAudioProcessorEditor::MIDICAudioProcessorEditor (MIDIControllerAudioProcess
 	modeSelector.onChange = [this] { modeSelectorChanged(); };
 	modeSelector.setSelectedId(currentMode);
 
+	noteTestButton.addListener(this);
 	noteTestButton.setColour(TextButton:: buttonColourId, Colours:: slategrey);
 	noteTestButton.setColour(TextButton::textColourOffId, Colours::black);
 	noteTestButton.setButtonText("Play Note");
 
+	noteResetButton.addListener(this);
 	noteResetButton.setColour(TextButton::buttonColourId, Colours::slategrey);
 	noteResetButton.setColour(TextButton::textColourOffId, Colours::black);
 	noteResetButton.setButtonText("Defualt Pitch");
@@ -263,5 +265,18 @@ void MIDICAudioProcessorEditor::modeSelectorChanged()
 	{
 		currentMode = 3;
 		resized();
+	}
+}
+
+void MIDICAudioProcessorEditor::buttonClicked(Button* button)
+{
+	if (button = &noteTestButton)
+	{
+		processor.notePlay = true;
+		DBG("Click");
+	}
+	if (button = &noteResetButton)
+	{
+		processor.noteReset = true;
 	}
 }

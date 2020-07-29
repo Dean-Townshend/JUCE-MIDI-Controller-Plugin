@@ -129,6 +129,8 @@ void MIDIControllerAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mid
 		MidiMessage m2;
 		MidiMessage m3;
 		MidiMessage m4;
+		MidiMessage m5;
+		MidiMessage m6;
 
 		if (ccVal0 != ccTempVal0)
 		{
@@ -151,6 +153,18 @@ void MIDIControllerAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mid
 		{
 			m4 = MidiMessage::controllerEvent(1, noteSelected, ccVal3);
 			generatedMidi.addEvent(m4, midiMessages.getLastEventTime());
+		}
+		else if (notePlay == true)
+		{
+			m5 = MidiMessage::noteOn(1, noteSelected, uint8(0));
+			generatedMidi.addEvent(m5, midiMessages.getLastEventTime());
+			notePlay = false;
+		}
+		else if (noteReset == true)
+		{
+			m5 = MidiMessage::noteOn(1, noteSelected, uint8(0));
+			generatedMidi.addEvent(m6, midiMessages.getLastEventTime());
+			noteReset = false;
 		}
 		else generatedMidi.clear();
 

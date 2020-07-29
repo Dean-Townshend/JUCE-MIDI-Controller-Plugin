@@ -8,7 +8,7 @@
 
 //==============================================================================
 
-class MIDICAudioProcessorEditor  : public AudioProcessorEditor, private Slider::Listener
+class MIDICAudioProcessorEditor  : public AudioProcessorEditor, private Slider::Listener, private Button::Listener
 {
 public:
     MIDICAudioProcessorEditor (MIDIControllerAudioProcessor&);
@@ -27,7 +27,8 @@ private:
     // access the processor object that created it.
     MIDIControllerAudioProcessor& processor;
 
-	void sliderValueChanged(Slider* slider) override; // [3
+	void sliderValueChanged(Slider* slider) override;
+	void buttonClicked(Button* button) override;
 
 	TextButton noteTestButton;
 	TextButton noteResetButton;
