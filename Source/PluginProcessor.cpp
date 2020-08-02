@@ -130,6 +130,7 @@ void MIDIControllerAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mid
 		MidiMessage m4;
 		MidiMessage m5;
 		MidiMessage m6;
+		MidiMessage m7;
 
 		if (currentMode == 3)
 		{
@@ -155,22 +156,37 @@ void MIDIControllerAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mid
 				m3 = MidiMessage::controllerEvent(1, 3, ccVal2);
 				generatedMidi.addEvent(m3, midiMessages.getLastEventTime());
 			}
+
 			//TuningSlider
 			else if (ccVal3 != ccTempVal3)
 			{
-				m4 = MidiMessage::controllerEvent(1, noteSelected, ccVal3);
+				if (ccVal3 >= 0 && ccVal3 <= 127)
+				{
+					m4 = MidiMessage::controllerEvent(2, noteSelected, ccVal3);
+				}
+				else if (ccTempVal3 >= 128 && ccTempVal3 <= 255)
+				{
+					m4 = MidiMessage::controllerEvent(3, noteSelected, ccVal3 - 127);
+				}
 				generatedMidi.addEvent(m4, midiMessages.getLastEventTime());
 			}
+
+			/*else if (ccVal4 != ccTempVal4)
+			{
+				m5 = MidiMessage::controllerEvent(3, noteSelected, ccVal4-127);
+				generatedMidi.addEvent(m5, midiMessages.getLastEventTime());
+			}*/
+
 			else if (notePlay == true)
 			{
-				m5 = MidiMessage::noteOn(1, noteSelected, uint8(0));
-				generatedMidi.addEvent(m5, midiMessages.getLastEventTime());
+				m6 = MidiMessage::noteOn(1, noteSelected, uint8(0));
+				generatedMidi.addEvent(m6, midiMessages.getLastEventTime());
 				notePlay = false;
 			}
 			else if (noteReset == true)
 			{
-				m5 = MidiMessage::noteOn(1, noteSelected, uint8(0));
-				generatedMidi.addEvent(m6, midiMessages.getLastEventTime());
+				m7 = MidiMessage::noteOn(2, noteSelected, uint8(0));
+				generatedMidi.addEvent(m7, midiMessages.getLastEventTime());
 				noteReset = false;
 			}
 			else generatedMidi.clear();
@@ -179,6 +195,7 @@ void MIDIControllerAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mid
 			ccTempVal1 = ccVal1;
 			ccTempVal2 = ccVal2;
 			ccTempVal3 = ccVal3;
+			//ccTempVal4 = ccVal4;
 
 			midiMessages.swapWith(generatedMidi);
 		}

@@ -4,11 +4,11 @@
 #include "PluginEditor.h"
 
 //==============================================================================
-MIDICAudioProcessorEditor::MIDICAudioProcessorEditor (MIDIControllerAudioProcessor& p) :AudioProcessorEditor (&p), processor (p), keyboard(keyboardState, juce::MidiKeyboardComponent::horizontalKeyboard)
+MIDICAudioProcessorEditor::MIDICAudioProcessorEditor(MIDIControllerAudioProcessor& p) :AudioProcessorEditor(&p), processor(p), keyboard(keyboardState, juce::MidiKeyboardComponent::horizontalKeyboard)
 {
-    // Make sure that before the constructor has finished, you've set the
-    // editor's size to whatever you need it to be.
-    setSize (600, 400);
+	// Make sure that before the constructor has finished, you've set the
+	// editor's size to whatever you need it to be.
+	setSize(600, 400);
 
 	//Delay time slider
 	delayTimeSlider.addListener(this);
@@ -46,9 +46,9 @@ MIDICAudioProcessorEditor::MIDICAudioProcessorEditor (MIDIControllerAudioProcess
 	tuningSlider.setColour(Slider::textBoxTextColourId, Colours::black);
 	tuningSlider.setColour(Slider::textBoxBackgroundColourId, Colours::slategrey);
 	tuningSlider.setColour(Slider::textBoxOutlineColourId, Colours::darkslategrey);
-	tuningSlider.setRange(0, 127, 1);
+	tuningSlider.setRange(0, 254, 1);
 	//tuningSlider.setTextValueSuffix(" ");
-	tuningSlider.setValue(0);
+	tuningSlider.setValue(processor.noteVals[processor.noteSelected]);
 
 	//Tuning slider label
 	tuningSliderLabel.setText("Tune", dontSendNotification);
@@ -78,9 +78,11 @@ MIDICAudioProcessorEditor::MIDICAudioProcessorEditor (MIDIControllerAudioProcess
 
 	//Note selector combo box
 	addAndMakeVisible(&modeSelector);
-	modeSelector.setColour(ComboBox::backgroundColourId, Colours::slategrey);
-	modeSelector.setColour(ComboBox::buttonColourId, Colours::slategrey);
-
+	modeSelector.setColour(ComboBox::backgroundColourId, Colours::red);
+	modeSelector.setColour(ComboBox::buttonColourId, Colours::red);
+	modeSelector.setColour(PopupMenu::backgroundColourId, Colours::red);
+	modeSelector.setColour(PopupMenu::highlightedBackgroundColourId, Colours::red);
+	
 	modeSelector.addItem("Delay", 1);
 	modeSelector.addItem("Tuning", 2);
 	modeSelector.addItem("Synth", 3);
@@ -89,7 +91,7 @@ MIDICAudioProcessorEditor::MIDICAudioProcessorEditor (MIDIControllerAudioProcess
 	modeSelector.setSelectedId(processor.currentMode);
 
 	noteTestButton.addListener(this);
-	noteTestButton.setColour(TextButton:: buttonColourId, Colours:: slategrey);
+	noteTestButton.setColour(TextButton::buttonColourId, Colours::slategrey);
 	noteTestButton.setColour(TextButton::textColourOffId, Colours::black);
 	noteTestButton.setButtonText("Play Note");
 
@@ -97,7 +99,6 @@ MIDICAudioProcessorEditor::MIDICAudioProcessorEditor (MIDIControllerAudioProcess
 	noteResetButton.setColour(TextButton::buttonColourId, Colours::slategrey);
 	noteResetButton.setColour(TextButton::textColourOffId, Colours::black);
 	noteResetButton.setButtonText("Defualt Pitch");
-
 }
 
 MIDICAudioProcessorEditor::~MIDICAudioProcessorEditor()
@@ -105,7 +106,7 @@ MIDICAudioProcessorEditor::~MIDICAudioProcessorEditor()
 }
 
 //==============================================================================
-void MIDICAudioProcessorEditor::paint (Graphics& g)
+void MIDICAudioProcessorEditor::paint(Graphics& g)
 {
 	g.fillAll(Colours::lightgrey);
 
@@ -121,7 +122,7 @@ void MIDICAudioProcessorEditor::resized()
 
 	Rectangle<int> sliderArea = guiArea;
 
-	if (processor.currentMode == 1) 
+	if (processor.currentMode == 1)
 	{
 		removeChildComponent(&keyboard);
 		removeChildComponent(&tuningSlider);
@@ -174,8 +175,8 @@ void MIDICAudioProcessorEditor::resized()
 		addAndMakeVisible(noteResetButton);
 
 		Rectangle<int> tuningArea = sliderArea;
-		
-		Rectangle<int> labels = tuningArea.removeFromTop(tuningArea.getHeight()*0.1);
+
+		Rectangle<int> labels = tuningArea.removeFromTop(tuningArea.getHeight() * 0.1);
 
 		Rectangle<int> tuningLabel = labels.removeFromLeft(tuningArea.getWidth() / 2);
 		tuningSliderLabel.setBounds(tuningLabel);
@@ -184,7 +185,7 @@ void MIDICAudioProcessorEditor::resized()
 		noteSelector.setBounds(tuningComboBox);
 
 		Rectangle<int> tuningSliderArea = tuningArea.removeFromTop(tuningArea.getHeight() * 0.9);
-		Rectangle<int> tuningSliderVal = tuningSliderArea.removeFromTop(tuningSliderArea.getHeight()* 0.1);
+		Rectangle<int> tuningSliderVal = tuningSliderArea.removeFromTop(tuningSliderArea.getHeight() * 0.1);
 
 		tuningSlider.setBounds(tuningSliderArea);
 
@@ -193,7 +194,7 @@ void MIDICAudioProcessorEditor::resized()
 		noteResetButton.setBounds(tuningArea);
 
 		tuningSlider.setTextBoxStyle(Slider::TextBoxBelow, false, tuningSliderVal.getWidth(), tuningSliderVal.getHeight());
-		
+
 		//noteSelector.setBounds(tuningComboBox);
 		tuningSliderLabel.setJustificationType(Justification::centred);
 	}
@@ -211,11 +212,11 @@ void MIDICAudioProcessorEditor::resized()
 
 		addAndMakeVisible(keyboard);
 
-		Rectangle<int> keyboardArea = sliderArea.removeFromTop(sliderArea.getHeight() /2);
+		Rectangle<int> keyboardArea = sliderArea.removeFromTop(sliderArea.getHeight() / 2);
 
 		keyboard.setBounds(keyboardArea);
 	}
-		
+
 }
 
 void MIDICAudioProcessorEditor::sliderValueChanged(Slider* slider)
@@ -234,6 +235,8 @@ void MIDICAudioProcessorEditor::sliderValueChanged(Slider* slider)
 	else if (slider == &tuningSlider)
 	{
 		processor.ccVal3 = tuningSlider.getValue();
+		processor.noteVals[processor.noteSelected-1] = tuningSlider.getValue();
+
 	}
 }
 
@@ -241,28 +244,52 @@ void MIDICAudioProcessorEditor::noteSelectorChanged()
 {
 	switch (noteSelector.getSelectedId())
 	{
-		case 1: processor.noteSelected = 1; break;
-		case 2: processor.noteSelected = 2; break;
-		case 3: processor.noteSelected = 3; break;
-		case 4: processor.noteSelected = 4; break;
-		case 5: processor.noteSelected = 5; break;
-		case 6: processor.noteSelected = 6; break;
-		case 7: processor.noteSelected = 7; break;
-		case 8: processor.noteSelected = 8; break;
-		case 9: processor.noteSelected = 9; break;
-		case 10: processor.noteSelected = 10; break;
-		case 11: processor.noteSelected = 11; break;
-		case 12: processor.noteSelected = 12; break;
-		case 13: processor.noteSelected = 13; break;
-		case 14: processor.noteSelected = 14; break;
-		case 15: processor.noteSelected = 15; break;
-		default: break;
+	case 1: processor.noteSelected = 1; 
+		tuningSlider.setValue(processor.noteVals[0]);
+		break;
+	case 2: processor.noteSelected = 2; 
+		tuningSlider.setValue(processor.noteVals[1]);
+		break;
+	case 3: processor.noteSelected = 3; 
+		tuningSlider.setValue(processor.noteVals[2]);
+		break;
+	case 4: processor.noteSelected = 4; 
+		tuningSlider.setValue(processor.noteVals[3]);
+		break;
+	case 5: processor.noteSelected = 5; 
+		tuningSlider.setValue(processor.noteVals[4]);
+		break;
+	case 6: processor.noteSelected = 6; 
+		tuningSlider.setValue(processor.noteVals[5]);
+		break;
+	case 7: processor.noteSelected = 7; 
+		tuningSlider.setValue(processor.noteVals[6]);
+		break;
+	case 8: processor.noteSelected = 8; 
+		tuningSlider.setValue(processor.noteVals[7]);
+		break;
+	case 9: processor.noteSelected = 9; 
+		tuningSlider.setValue(processor.noteVals[8]);
+		break;
+	case 10: processor.noteSelected = 10; 
+		tuningSlider.setValue(processor.noteVals[9]);
+		break;
+	case 11: processor.noteSelected = 11; 
+		tuningSlider.setValue(processor.noteVals[10]);
+		break;
+	case 12: processor.noteSelected = 12; 
+		tuningSlider.setValue(processor.noteVals[11]);
+		break;
+	case 13: processor.noteSelected = 13; 
+		tuningSlider.setValue(processor.noteVals[12]);
+		break;
+	default: break;
 	}
 }
 
 void MIDICAudioProcessorEditor::modeSelectorChanged()
 {
-	if (modeSelector.getSelectedId()==1)
+	if (modeSelector.getSelectedId() == 1)
 	{
 		processor.currentMode = 1;
 		resized();
