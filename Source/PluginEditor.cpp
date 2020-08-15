@@ -78,10 +78,10 @@ MIDICAudioProcessorEditor::MIDICAudioProcessorEditor(MIDIControllerAudioProcesso
 
 	//Note selector combo box
 	addAndMakeVisible(&modeSelector);
-	modeSelector.setColour(ComboBox::backgroundColourId, Colours::red);
-	modeSelector.setColour(ComboBox::buttonColourId, Colours::red);
-	modeSelector.setColour(PopupMenu::backgroundColourId, Colours::red);
-	modeSelector.setColour(PopupMenu::highlightedBackgroundColourId, Colours::red);
+	modeSelector.setColour(ComboBox::backgroundColourId, Colours::slategrey);
+	modeSelector.setColour(ComboBox::buttonColourId, Colours::slategrey);
+	modeSelector.setColour(PopupMenu::backgroundColourId, Colours::slategrey);
+	modeSelector.setColour(PopupMenu::highlightedBackgroundColourId, Colours::slategrey);
 	
 	modeSelector.addItem("Delay", 1);
 	modeSelector.addItem("Tuning", 2);
