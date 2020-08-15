@@ -6,8 +6,6 @@
 //==============================================================================
 MIDICAudioProcessorEditor::MIDICAudioProcessorEditor(MIDIControllerAudioProcessor& p) :AudioProcessorEditor(&p), processor(p), keyboard(keyboardState, juce::MidiKeyboardComponent::horizontalKeyboard)
 {
-	// Make sure that before the constructor has finished, you've set the
-	// editor's size to whatever you need it to be.
 	setSize(600, 400);
 
 	//Delay time slider
@@ -19,7 +17,6 @@ MIDICAudioProcessorEditor::MIDICAudioProcessorEditor(MIDIControllerAudioProcesso
 	delayTimeSlider.setColour(Slider::textBoxOutlineColourId, Colours::darkslategrey);
 	delayTimeSlider.setRange(0, 254, 1);
 	delayTimeSlider.setValue(0);
-
 	//Delay time label
 	delayTimeSliderLabel.setText("Delay Time", dontSendNotification);
 	delayTimeSliderLabel.setColour(Label::textColourId, Colours::darkslategrey);
@@ -32,9 +29,7 @@ MIDICAudioProcessorEditor::MIDICAudioProcessorEditor(MIDIControllerAudioProcesso
 	variPitchSlider.setColour(Slider::textBoxBackgroundColourId, Colours::slategrey);
 	variPitchSlider.setColour(Slider::textBoxOutlineColourId, Colours::darkslategrey);
 	variPitchSlider.setRange(0, 127, 1);
-	//tuningSlider.setTextValueSuffix(" ");
 	variPitchSlider.setValue(0);
-
 	//vari pitch slider label
 	variPitchSliderLabel.setText("Varipitch", dontSendNotification);
 	variPitchSliderLabel.setColour(Label::textColourId, Colours::darkslategrey);
@@ -47,15 +42,12 @@ MIDICAudioProcessorEditor::MIDICAudioProcessorEditor(MIDIControllerAudioProcesso
 	tuningSlider.setColour(Slider::textBoxBackgroundColourId, Colours::slategrey);
 	tuningSlider.setColour(Slider::textBoxOutlineColourId, Colours::darkslategrey);
 	tuningSlider.setRange(0, 254, 1);
-	//tuningSlider.setTextValueSuffix(" ");
 	tuningSlider.setValue(processor.noteVals[processor.noteSelected]);
-
 	//Tuning slider label
 	tuningSliderLabel.setText("Tune", dontSendNotification);
 	tuningSliderLabel.setColour(Label::textColourId, Colours::darkslategrey);
 
 	//Note selector combo box
-	//addAndMakeVisible(noteSelector);
 	noteSelector.setColour(ComboBox::backgroundColourId, Colours::slategrey);
 	noteSelector.setColour(ComboBox::buttonColourId, Colours::slategrey);
 
@@ -76,7 +68,7 @@ MIDICAudioProcessorEditor::MIDICAudioProcessorEditor(MIDIControllerAudioProcesso
 	noteSelector.onChange = [this] { noteSelectorChanged(); };
 	noteSelector.setSelectedId(1);
 
-	//Note selector combo box
+	//Mode selector combo box
 	addAndMakeVisible(&modeSelector);
 	modeSelector.setColour(ComboBox::backgroundColourId, Colours::slategrey);
 	modeSelector.setColour(ComboBox::buttonColourId, Colours::slategrey);
@@ -90,11 +82,13 @@ MIDICAudioProcessorEditor::MIDICAudioProcessorEditor(MIDIControllerAudioProcesso
 	modeSelector.onChange = [this] { modeSelectorChanged(); };
 	modeSelector.setSelectedId(processor.currentMode);
 
+	//Note test button
 	noteTestButton.addListener(this);
 	noteTestButton.setColour(TextButton::buttonColourId, Colours::slategrey);
 	noteTestButton.setColour(TextButton::textColourOffId, Colours::black);
 	noteTestButton.setButtonText("Play Note");
 
+	//Note reset button
 	noteResetButton.addListener(this);
 	noteResetButton.setColour(TextButton::buttonColourId, Colours::slategrey);
 	noteResetButton.setColour(TextButton::textColourOffId, Colours::black);
@@ -225,6 +219,7 @@ void MIDICAudioProcessorEditor::sliderValueChanged(Slider* slider)
 	{
 		if (delayTimeSlider.getValue() >= 0 && delayTimeSlider.getValue() <= 127)
 			processor.ccVal0 = delayTimeSlider.getValue();
+
 		else if (delayTimeSlider.getValue() >= 128 && delayTimeSlider.getValue() <= 255)
 			processor.ccVal1 = delayTimeSlider.getValue();
 	}
@@ -232,16 +227,26 @@ void MIDICAudioProcessorEditor::sliderValueChanged(Slider* slider)
 	{
 		processor.ccVal2 = variPitchSlider.getValue();
 	}
+
 	else if (slider == &tuningSlider)
 	{
-		processor.ccVal3 = tuningSlider.getValue();
+		//processor.ccVal3 = tuningSlider.getValue();
 		processor.noteVals[processor.noteSelected-1] = tuningSlider.getValue();
+
+		if (tuningSlider.getValue() >= 0 && tuningSlider.getValue() <= 127)
+			processor.ccVal3 = tuningSlider.getValue();
+
+		else if (tuningSlider.getValue() >= 128 && tuningSlider.getValue() <= 255)
+			processor.ccVal4 = tuningSlider.getValue();
 
 	}
 }
 
 void MIDICAudioProcessorEditor::noteSelectorChanged()
 {
+	DBG("Tuning Note: ");
+	DBG(noteSelector.getSelectedId() + 59);
+
 	switch (noteSelector.getSelectedId())
 	{
 	case 1: processor.noteSelected = 1; 
@@ -289,20 +294,24 @@ void MIDICAudioProcessorEditor::noteSelectorChanged()
 
 void MIDICAudioProcessorEditor::modeSelectorChanged()
 {
+
 	if (modeSelector.getSelectedId() == 1)
 	{
 		processor.currentMode = 1;
 		resized();
+		DBG("Changed To Delay Mode");
 	}
 	else if (modeSelector.getSelectedId() == 2)
 	{
 		processor.currentMode = 2;
 		resized();
+		DBG("Changed To Tuning Mode");
 	}
 	else if (modeSelector.getSelectedId() == 3)
 	{
 		processor.currentMode = 3;
 		resized();
+		DBG("Changed To Synth Mode");
 	}
 }
 
@@ -311,10 +320,11 @@ void MIDICAudioProcessorEditor::buttonClicked(Button* button)
 	if (button = &noteTestButton)
 	{
 		processor.notePlay = true;
-		DBG("Click");
+		DBG("Playing Current Note");
 	}
 	if (button = &noteResetButton)
 	{
 		processor.noteReset = true;
+		DBG("Current Note Tuning Reset");
 	}
 }

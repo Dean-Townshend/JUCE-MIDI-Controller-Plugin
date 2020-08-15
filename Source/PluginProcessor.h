@@ -23,8 +23,8 @@ public:
 	int8 ccVal2 = 0;
 	int8 ccTempVal3 = 0;
 	int8 ccVal3 = 0;
-	/*int8 ccTempVal4 = 0;
-	int8 ccVal4 = 0;*/
+	int8 ccTempVal4 = 0;
+	int8 ccVal4 = 0;
 
 	int noteVals[14] = { 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127 };
 

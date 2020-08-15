@@ -122,7 +122,9 @@ bool MIDIControllerAudioProcessor::isBusesLayoutSupported (const BusesLayout& la
 void MIDIControllerAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer& midiMessages)
 {
 		buffer.clear();
+		//midiMessages.clear();
 		MidiBuffer generatedMidi;
+
 		MidiMessage m0;
 		MidiMessage m1;
 		MidiMessage m2;
@@ -132,11 +134,7 @@ void MIDIControllerAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mid
 		MidiMessage m6;
 		MidiMessage m7;
 
-		if (currentMode == 3)
-		{
-
-		}
-		else
+		if (currentMode == 1 || currentMode == 2)
 		{
 			midiMessages.clear();
 
@@ -160,15 +158,14 @@ void MIDIControllerAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mid
 			//TuningSlider
 			else if (ccVal3 != ccTempVal3)
 			{
-				if (ccVal3 >= 0 && ccVal3 <= 127)
-				{
-					m4 = MidiMessage::controllerEvent(2, noteSelected, ccVal3);
-				}
-				else if (ccTempVal3 >= 128 && ccTempVal3 <= 255)
-				{
-					m4 = MidiMessage::controllerEvent(3, noteSelected, ccVal3 - 127);
-				}
+				m4 = MidiMessage::controllerEvent(2, noteSelected, ccVal3);
 				generatedMidi.addEvent(m4, midiMessages.getLastEventTime());
+			}
+
+			else if (ccVal4 != ccTempVal4)
+			{
+				m5 = MidiMessage::controllerEvent(3, noteSelected, ccVal4 - 127);
+				generatedMidi.addEvent(m5, midiMessages.getLastEventTime());
 			}
 
 			/*else if (ccVal4 != ccTempVal4)
@@ -195,7 +192,7 @@ void MIDIControllerAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mid
 			ccTempVal1 = ccVal1;
 			ccTempVal2 = ccVal2;
 			ccTempVal3 = ccVal3;
-			//ccTempVal4 = ccVal4;
+			ccTempVal4 = ccVal4;
 
 			midiMessages.swapWith(generatedMidi);
 		}
