@@ -6,7 +6,7 @@
 //==============================================================================
 MIDICAudioProcessorEditor::MIDICAudioProcessorEditor(MIDIControllerAudioProcessor& p) :AudioProcessorEditor(&p), processor(p), keyboard(keyboardState, juce::MidiKeyboardComponent::horizontalKeyboard)
 {
-	setSize(600, 400);
+	setSize(400, 200);
 
 	//Delay time slider
 	delayTimeSlider.addListener(this);
@@ -16,7 +16,7 @@ MIDICAudioProcessorEditor::MIDICAudioProcessorEditor(MIDIControllerAudioProcesso
 	delayTimeSlider.setColour(Slider::textBoxBackgroundColourId, Colours::slategrey);
 	delayTimeSlider.setColour(Slider::textBoxOutlineColourId, Colours::darkslategrey);
 	delayTimeSlider.setRange(0, 254, 1);
-	delayTimeSlider.setValue(0);
+	delayTimeSlider.setValue(120);
 	//Delay time label
 	delayTimeSliderLabel.setText("Delay Time", dontSendNotification);
 	delayTimeSliderLabel.setColour(Label::textColourId, Colours::darkslategrey);
